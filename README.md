@@ -41,28 +41,25 @@ end
 This only applies to Rubymine users though, where you have a Template file loaded during the creation screen (or similar IDE's). If you're not, you simply will not add the template to your Console command =)
 
 
-`So, how do I run this thing?`
+####So, how do I run this thing?
 
-Excellent question!
+#####Rubymine:
+When you create a new project; choose a name, project directory and "Rails Application".
+On the second prompt which appears - where you select your Rails version, Ruby SDK, etc - browse to the `template.rb` inside the `foundation-install-template` folder.
 
-In Rubymine, it's as simple as browsing to the "template.rb" file inside the downloaded folder using the "Rails Template:" prompt when you first click "New Project" (After typing in your project name of course).
 
-
-Please note:
-This script does Not run "rails g foundation:install" for you, nor does it run "bundle install". This is intentional.
-I will, in the future add support for this, supposing people are interested in this kind of script.
-
-Loading a template using the Console:
+#####Not using Rubymine? Not a problem:
+New Rails app using the Template:
 ``` ruby
 $ rails new <project_name> -m /path/to/template.rb
 ```
+
+Or add the Template to an existing Rails app:
 ``` ruby
 $ rake rails:template LOCATION=/path/to/template.rb
 ```
 
 ####Download links:
-
-
 7zip: https://dl.dropboxusercontent.com/u/55554784/Ruby/foundation-install.7z
 
 zip: https://dl.dropboxusercontent.com/u/55554784/Ruby/foundation-install.zip
