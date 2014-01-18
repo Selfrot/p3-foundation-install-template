@@ -1,44 +1,48 @@
 Foundation Rails Template
 =========================
 
-If you're like me, a Rubymine user, you might be kind of aggetated that you can't setup a "default" folder structure.
-Let's say: "create "application.css.scss" once a new project is created", instead of going to the file, hitting Shift-F6 to rename the file appropriately before running your normal Foundation installation routine.
+####Download links:
+7zip: https://dl.dropboxusercontent.com/u/55554784/Ruby/foundation-install.7z
 
-This template basically renames your application.css to application.css.scss during the creation of the project, once it has finished doing that it will run through your Gemfile and checking whether or not 'foundation-rails' exists.
-If it does not, add it and then let Rails finish creating your project.
+zip: https://dl.dropboxusercontent.com/u/55554784/Ruby/foundation-install.zip
 
+This template will walk hand in hand with the Rails installation and add Scss and Foundation to your project, without You having to rename your application.css file or even add foundation to your Gemfile!
+
+The source is documented so you can easily change things to suit your needs.
+
+#####What it does:
+
+The script will first notice:
+``` ruby
+puts 'Do you want to enable SASS? (Y/N)'
+Add_Scss::get_input
+```
+Which will prompt for a yes/no reply, depending on the input given - it will either rename `application.css` to have the extension `.css.scss`... Or not.
+
+Should the Stylesheet already have the extension, we'll simply return that the file already exists.
 ``` ruby
 # Check if application.css.scss exists.
 if File.exist?('app/assets/stylesheets/application.css.scss')
 	puts '"application.css.scss" already exists'
 else
-# If it does not: add it.
-	Dir.glob('app/assets/stylesheets/application.css').each do |f|
-		FileUtils.mv f, "#{File.dirname(f)}/#{File.basename(f,'.*')}.css.scss"
-		puts "application.css renamed to application.css.scss"
-	end
+# Something else
 end
 ```
 
-Sometimes though, you might not want to add Foundation or SASS for that matter to your project, the ultra supah awesome Y/N feature will let you run the installation normally, as if you didn't have the Template active at all.
-
+Once SASS is out of the way, we'll run:
 ``` ruby
-puts 'Do you want to enable SASS? (Y/N)'
+puts 'Do you want to add the Foundation gem? (Y/N)'
+Add_Foundation::get_input
+```
+Which will check whether our gem exists in our Gemfile and add it if it doesn't:
+``` ruby
+if !!(read_gemfile =~ /gem 'foundation-rails'/) == false
+	add_foundation = true
+else
 ```
 
-``` ruby
-case input.upcase
-  when "Y"
-  	Add_Scss.implement_scss
-  when "N"
-  	puts "SASS was not added."
-  else
-  	puts "Please enter Y or N"
-  	get_input
-end
-```
-
-This only applies to Rubymine users though, where you have a Template file loaded during the creation screen (or similar IDE's). If you're not, you simply will not add the template to your Console command =)
+I figured this system would be helpful for Rubymine users, so we don't have to think about removing the Template when we create a project without Sass or Foundation.
+Also, we can now create a project which only uses Sass or only uses Foundation, by simply typing N then Y or Y then N respectively.
 
 
 ####So, how do I run this thing?
