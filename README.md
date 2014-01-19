@@ -49,7 +49,7 @@ Also, we can now create a project which only uses Sass or only uses Foundation, 
 
 #####Rubymine:
 When you create a new project; choose a name, project directory and "Rails Application".
-On the second prompt which appears - where you select your Rails version, Ruby SDK, etc - browse to the `template.rb` inside the `foundation-install-template` folder.
+On the second prompt which appears - where you select your Rails version, Ruby SDK, etc - browse to the `template.rb` inside the `foundation-install-template` folder using the "Rails Template:" box - or simply type in the absolute path.
 
 
 #####Not using Rubymine? Not a problem:
