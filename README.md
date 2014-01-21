@@ -1,11 +1,6 @@
 Foundation Rails Template
 =========================
 
-####Download links:
-7zip: https://dl.dropboxusercontent.com/u/55554784/Ruby/foundation-install.7z
-
-zip: https://dl.dropboxusercontent.com/u/55554784/Ruby/foundation-install.zip
-
 This template will walk hand in hand with the Rails installation and add Scss and Foundation to your project, without You having to rename your application.css file or even add foundation to your Gemfile!
 
 The source is documented so you can easily change things to suit your needs.
@@ -62,12 +57,6 @@ Or add the Template to an existing Rails app:
 ``` ruby
 $ rake rails:template LOCATION=/path/to/template.rb
 ```
-
-####Download links:
-7zip: https://dl.dropboxusercontent.com/u/55554784/Ruby/foundation-install.7z
-
-zip: https://dl.dropboxusercontent.com/u/55554784/Ruby/foundation-install.zip
-
 
 
 
