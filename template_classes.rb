@@ -1,22 +1,15 @@
 module Actions
 	class Add_Foundation
-		@tmp_file = File.join(File.dirname(__FILE__), '/tmp.txt')
 
 		# The method for adding the Foundation gem to our Gemfile.
 		def self.implement_fndn
 
-
 			# Define the gem to be added.
 			fndn_gem = "\ngem 'foundation-rails'\n"
-
 			# Define the name of our Gemfile and the method on which to open it. 'r' is 'Read'.
 			gem_file = File.open('Gemfile', 'r')
-
-			# Let's read the Gemfile and determine if the Foundation gem exists.
-			read_gemfile = gem_file.read
-
 			# Determine the current state of our Gemfile.
-			if !!(read_gemfile =~ /gem 'foundation-rails'/) == false
+			if !!(gem_file.read =~ /#{fndn_gem}/) == false
 				add_foundation = true
 			else
 				add_foundation = false
@@ -28,15 +21,22 @@ module Actions
 				# Open the Gemfile, this time using 'a' or 'Append' and print out that we've added the gem.
 				File.open('Gemfile', 'a') {|append| append.write(fndn_gem)}
 				puts "Successfully added Foundation to your Gemfile."
-				File.open(@tmp_file, 'w+') {|tempentry| tempentry.write("ACTIVE")}
+
+				if File.exist?('app/assets/stylesheets/application.css.scss')
+					scss_file = File.read('app/assets/stylesheets/application.css.scss')
+					(\
+					 !!(scss_file =~ /@import 'foundation_and_overrides';/) == false \
+					 ? Utilities::Writes.tmp_entry("ADD SCSS LINE") \
+				   : Utilities::Writes.tmp_entry("LINE EXISTS") \
+				  )
+				end
 
 			elsif !add_foundation
-
 				# Print out that the gem exists inside the Gemfile.
 				puts "Foundation is already in your Gemfile."
-				File.open(@tmp_file, 'w+') {|tempentry| tempentry.write("EXISTING")}
-
+				Utilities::Writes.tmp_entry('FOUNDATION EXISTS')
 			end
+
 		end	# End of implement_fndn
 
 
