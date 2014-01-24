@@ -1,132 +1,124 @@
-module Actions
-	class Add_Foundation
+class Add
 
-		# The method for adding the Foundation gem to our Gemfile.
-		def self.implement_fndn
+	# Should we add SCSS to our Rails application?
+	def self.scss?
+		# Flush buffered data.
+		STDOUT.flush
+		# Bind console input to a variable named input
+		input = STDIN.gets.chomp
+		# Open a case and transform our input to uppercase.
+		case input.upcase
 
-			# Define the gem to be added.
-			fndn_gem = "\ngem 'foundation-rails'\n"
-			# Define the name of our Gemfile and the method on which to open it. 'r' is 'Read'.
-			gem_file = File.open('Gemfile', 'r')
-			# Determine the current state of our Gemfile.
-			if !!(gem_file.read =~ /#{fndn_gem}/) == false
-				add_foundation = true
-			else
-				add_foundation = false
-			end
 
-			# Depending on the state of our Gemfile, we respond accordingly.
-			if add_foundation
+			# When we've entered 'N'...
+			when "N"
+				# Print out that SASS was not added.
+				puts "SASS was not added."
 
-				# Open the Gemfile, this time using 'a' or 'Append' and print out that we've added the gem.
-				File.open('Gemfile', 'a') {|append| append.write(fndn_gem)}
-				puts "Successfully added Foundation to your Gemfile."
 
-				if File.exist?('app/assets/stylesheets/application.css.scss')
-					scss_file = File.read('app/assets/stylesheets/application.css.scss')
-					(\
-					 !!(scss_file =~ /@import 'foundation_and_overrides';/) == false \
-					 ? Utilities::Writes.tmp_entry("ADD SCSS LINE") \
-				   : Utilities::Writes.tmp_entry("LINE EXISTS") \
-				  )
+			# When we've entered 'Y'...
+			when "Y"
+				# ...start with checking if the file already exists.
+				scss = File.exist?('app/assets/stylesheets/application.css.scss')
+
+				# Open a new case, this time with a boolean outcome in mind.
+				case scss
+					# If scss returns 'true', i.e. if the file already exists.
+					when true
+						# Print out that the file already exists.
+						puts '"application.css.scss" already exists'
+						# If it returns true and the file does not exist...
+					when false
+						# ...find every occurance of the file in the stylesheet's folder.
+						Dir.glob('app/assets/stylesheets/application.css').each do |f|
+							# "Move" the file to a new name, using the basename as a guide. To preserve the folder it's in, and 'application.css' + '.scss'
+							# Without both string interpolations, we would end up with an 'application.scss' in our 'assets' folder, instead.
+							FileUtils.mv f, "#{File.dirname(f)}/#{File.basename(f,'.*')}.css.scss"
+							# Print out what we did and we're all done!
+							puts "application.css renamed to application.css.scss"
+						end
+					# If for some reason the case returns neither true nor false - return.
+					else
+						return
 				end
 
-			elsif !add_foundation
-				# Print out that the gem exists inside the Gemfile.
-				puts "Foundation is already in your Gemfile."
-				Utilities::Writes.tmp_entry('FOUNDATION EXISTS')
-			end
-
-		end	# End of implement_fndn
-
-
-
-
-		# The method which receives the input from our console.
-		def self.get_input
-			STDOUT.flush
-			# Get the input from the console and store it as a variable.
-			input = STDIN.gets.chomp
-
-			# Open up a case and print our variable in uppercase.
-			case input.upcase
-
-				# We've entered "Y" into the console.
-				when "Y"
-					# Call the method for adding our gem to the Gemfile.
-					Add_Foundation.implement_fndn
-
-				# We've entered "N" into the console.
-				when "N"
-					# So we inform ourselves that we did not add the gem.
-					puts "Foundation was not added."
-
-				# We haven't typed in "Y" or "N" in our console, or we've simply filled it with nonsense.
-				else
-					# Let's make sure that we print out what went wrong, so there will be no confusion...
-					puts "Please enter Y or N"
-					# ...then run it all over again.
-					get_input
-			end
-		end # End of get_input
-	end
-
-
-
-	class Add_Scss
-
-		# Method for adding the .scss extension to our application.css file.
-		def self.implement_scss
-
-			# First we determine whether "application.css.scss" exists.
-			if File.exist?('app/assets/stylesheets/application.css.scss')
-
-				# Print out this fine message if it does.
-				puts '"application.css.scss" already exists'
-
-				# If it does not:
+				# If we've entered bogus letters and numbers, or absolutely nothing...
 			else
-				# Open open up our Stylesheet directory.
-				Dir.glob('app/assets/stylesheets/application.css').each do |f|
-					# Then "move" the file. What we're actually doing is moving it to a different name. Weird huh?
-					FileUtils.mv f, "#{File.dirname(f)}/#{File.basename(f,'.*')}.css.scss"
+				# Make sure that we let ourselves know that we only accept yes and no answers...
+				puts "Please enter Y or N"
+				# ...and then start all over again.
+				scss?
+		end
+	end # end of 'scss?' method
 
-					puts "application.css renamed to application.css.scss"
+
+
+	def self.foundation?
+
+		# Flush the buffer.
+		STDOUT.flush
+		# Bind console input to a variable named input
+		input = STDIN.gets.chomp
+		# 'Y' answer.
+		case input.upcase
+
+
+			# When we've entered 'N'...
+			when "N"
+				# Print out that Foundation was not added.
+				puts "Foundation was not added."
+
+
+			# When we've entered 'Y'...
+			when "Y"
+				# Bind our gem to the variable 'line'
+				line = "\ngem 'foundation-rails'\n"
+				# Bind variable 'gem_file' to open our Gemfile for reading only.
+				gem_file = File.open('Gemfile', 'r')
+				# Match our 'line' variable with the contents of our Gemfile.
+				# '!!()' will make our match boolean instead of '1' and 'nil'
+				match = !!(gem_file.read =~ /#{line}/)
+
+				# Open up a case for our match variable.
+				case match
+					# When the match returns false, i.e. the gem does Not exist in our Gemfile...
+					when false
+						# ...open up the gem file, this time using 'a' or 'append' and append our gem at the bottom of the file.
+						File.open('Gemfile', 'a') {|append| append.write(line)}
+						# Print out that the gem file was added.
+						puts "Successfully added Foundation to your Gemfile."
+
+						# Check whether we're using SASS.
+						if File.exist?('app/assets/stylesheets/application.css.scss')
+							# If we do, bind reading our stylesheet to the variable 'scss_file'.
+							scss_file = File.read('app/assets/stylesheets/application.css.scss')
+							# Check to see whether our stylesheet already has the 'foundation_and_overrides' included.
+							# If it's Not, write to the temp file that we should add it. Otherwise write that we shouldn't.
+							(!!(scss_file =~ /@import 'foundation_and_overrides';/) == false) ?
+									Utilities::Writes.tmp_entry("ADD SCSS LINE") :
+									Utilities::Writes.tmp_entry("LINE EXISTS")
+						end
+					# When the match returns true, i.e. the gem Does exist in our Gemfile...
+					when true
+						# ...write to the console that the gem exists.
+						puts "Foundation is already in your Gemfile."
+						# Then write to the temp file that foundation already exists.
+						Utilities::Writes.tmp_entry('FOUNDATION EXISTS')
+
+					# If for some reason the case returns neither true nor false - return.
+					else
+						return
 				end
-			end
 
-
+			# If we've entered bogus letters and numbers, or absolutely nothing...
+			else
+				# Make sure that we let ourselves know that we only accept yes and no answers...
+				puts "Please enter Y or N"
+				# ...and then start all over again.
+				foundation?
 		end
+	end # end of 'foundation?' method
 
-		# Method for receiving our console input.
-		def self.get_input
-			STDOUT.flush
 
-			# Bind our console input to a variable.
-			input = STDIN.gets.chomp
 
-			# Open up a case and transform our input to uppercase.
-			case input.upcase
-
-				# We've entered "Y" in our console...
-				when "Y"
-					# Call our "implement_scss" method.
-					Add_Scss.implement_scss
-
-				# We've entered "N" in our console...
-				when "N"
-
-					# ...so we simply print out that nothing was added.
-					puts "SASS was not added."
-
-				# We've typed in something we don't want, or simply forgot to type something in and just hit "enter".
-				else
-					# Print out what went wrong, how to fix it and...
-					puts "Please enter Y or N"
-
-					# ...start all over again.
-					get_input
-			end
-		end
-	end
-end
+end # end of 'Add' class
