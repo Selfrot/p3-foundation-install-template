@@ -12,7 +12,10 @@ The script will first notice:
 # puts "Do you want to enable sass"...
 Add.scss?
 ```
-Which will prompt for a yes/no reply.
+Which prompts for a yes/no answer.
+
+
+
 ``` ruby
 scss = File.exist?('app/assets/stylesheets/application.css.scss')
 case scss
