@@ -5,7 +5,7 @@ This template will walk hand in hand with the Rails installation and add Scss an
 
 The source is documented so you can easily change things to suit your needs.
 
-#####What it does:
+####What it does:
 
 The script will first notice:
 ``` ruby
@@ -14,18 +14,18 @@ Add.scss?
 ```
 Which will prompt for a yes/no reply.
 ``` ruby
-	scss = File.exist?('app/assets/stylesheets/application.css.scss')
-	case scss
-		when true
-				puts '"application.css.scss" already exists'
-		when false
-			Dir.glob('app/assets/stylesheets/application.css').each do |f|
-				FileUtils.mv f, "#{File.dirname(f)}/#{File.basename(f,'.*')}.css.scss"
-				puts "application.css renamed to application.css.scss"
-			end
-		else
-		  return
-	end
+scss = File.exist?('app/assets/stylesheets/application.css.scss')
+case scss
+	when true
+			puts '"application.css.scss" already exists'
+	when false
+		Dir.glob('app/assets/stylesheets/application.css').each do |f|
+			FileUtils.mv f, "#{File.dirname(f)}/#{File.basename(f,'.*')}.css.scss"
+			puts "application.css renamed to application.css.scss"
+		end
+	else
+	  return
+end
 ```
 
 Once SASS is out of the way, we'll run:
@@ -61,13 +61,13 @@ I figured a system which prompts for yes/no answers would be helpful for Rubymin
 Also, we can now create a project which only uses only one of the two, by simply typing N - Y or Y - N respectively.
 
 
-####So, how do I run this thing?
-#####Rubymine:
+###So, how do I run this thing?
+####Rubymine:
 When you create a new project; choose a name, project directory and "Rails Application".
 On the second prompt which appears - where you select your Rails version, Ruby SDK, etc - browse to the `template.rb` inside the `foundation-install-template` folder using the "Rails Template:" box - or simply type in the absolute path.
 
 
-#####Not using Rubymine? Not a problem:
+####Not using Rubymine? Not a problem:
 New Rails app using the Template:
 ``` ruby
 $ rails new <project_name> -m /path/to/template.rb
