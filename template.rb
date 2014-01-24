@@ -1,6 +1,6 @@
 require 'fileutils'
-require File.join(File.dirname(__FILE__), '/template_classes.rb')
-require File.join(File.dirname(__FILE__), '/util_classes.rb')
+require File.join(File.dirname(__FILE__), '/lib/add.rb')
+require File.join(File.dirname(__FILE__), '/lib/util_classes.rb')
 
 puts "\n\n=======================================\nDo you want to enable SASS?\n=================(Y/N)================="
 Add.scss?
