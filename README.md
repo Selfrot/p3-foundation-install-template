@@ -9,39 +9,59 @@ The source is documented so you can easily change things to suit your needs.
 
 The script will first notice:
 ``` ruby
-puts 'Do you want to enable SASS? (Y/N)'
-Add_Scss::get_input
+# puts "Do you want to enable sass"...
+Add.scss?
 ```
-Which will prompt for a yes/no reply, depending on the input given - it will either rename `application.css` to have the extension `.css.scss`... Or not.
-
-Should the Stylesheet already have the extension, we'll simply return that the file already exists.
+Which will prompt for a yes/no reply.
 ``` ruby
-# Check if application.css.scss exists.
-if File.exist?('app/assets/stylesheets/application.css.scss')
-	puts '"application.css.scss" already exists'
-else
-# Something else
-end
+	scss = File.exist?('app/assets/stylesheets/application.css.scss')
+	case scss
+		when true
+				puts '"application.css.scss" already exists'
+		when false
+			Dir.glob('app/assets/stylesheets/application.css').each do |f|
+				FileUtils.mv f, "#{File.dirname(f)}/#{File.basename(f,'.*')}.css.scss"
+				puts "application.css renamed to application.css.scss"
+			end
+		else
+		  return
+	end
 ```
 
 Once SASS is out of the way, we'll run:
 ``` ruby
-puts 'Do you want to add the Foundation gem? (Y/N)'
-Add_Foundation::get_input
-```
-Which will check whether our gem exists in our Gemfile and add it if it doesn't:
-``` ruby
-if !!(read_gemfile =~ /gem 'foundation-rails'/) == false
-	add_foundation = true
-else
+# puts "Do you want to enable foundation"...
+Add.foundation?
 ```
 
-I figured this system would be helpful for Rubymine users, so we don't have to think about removing the Template when we create a project without Sass or Foundation.
-Also, we can now create a project which only uses Sass or only uses Foundation, by simply typing N then Y or Y then N respectively.
+To be sure that we don't add stuff that's already there.
+Let's say you enter Y by mistake, then we have this nifty test to see whether our gem already exists.
+``` ruby
+line = "\ngem 'foundation-rails'\n"
+gem_file = File.open('Gemfile', 'r')
+match = !!(gem_file.read =~ /#{line}/)
+case match
+	when false
+		File.open('Gemfile', 'a') {|append| append.write(line)}
+		puts "Successfully added Foundation to your Gemfile."
+		if File.exist?('app/assets/stylesheets/application.css.scss')
+			scss_file = File.read('app/assets/stylesheets/application.css.scss')
+			(!!(scss_file =~ /@import 'foundation_and_overrides';/) == false) ?
+					Utilities::Writes.tmp_entry("ADD SCSS LINE") :
+					Utilities::Writes.tmp_entry("LINE EXISTS")
+		end
+	when true
+		puts "Foundation is already in your Gemfile."
+		Utilities::Writes.tmp_entry('FOUNDATION EXISTS')
+	else
+		return
+```
+
+I figured a system which prompts for yes/no answers would be helpful for Rubymine users -- so we don't have to think about removing the Template whenever we want to create a project without Sass, Foundation or even both.
+Also, we can now create a project which only uses only one of the two, by simply typing N - Y or Y - N respectively.
 
 
 ####So, how do I run this thing?
-
 #####Rubymine:
 When you create a new project; choose a name, project directory and "Rails Application".
 On the second prompt which appears - where you select your Rails version, Ruby SDK, etc - browse to the `template.rb` inside the `foundation-install-template` folder using the "Rails Template:" box - or simply type in the absolute path.
