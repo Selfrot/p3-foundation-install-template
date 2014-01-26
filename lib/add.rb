@@ -23,14 +23,9 @@ class Add
 						puts 'SASS was not added.'
 					# When we've entered 'Y'...
 					when 'Y'
-						# ...find every occurance of the file in the stylesheet's folder.
-						Dir.glob('app/assets/stylesheets/application.css').each do |f|
-							# "Move" the file to a new name, using the basename as a guide. To preserve the folder it's in, and 'application.css' + '.scss'
-							# Without both string interpolations, we would end up with an 'application.scss' in our 'assets' folder, instead.
-							FileUtils.mv f, "#{File.dirname(f)}/#{File.basename(f,'.*')}.css.scss"
-							# Print out what we did and we're all done!
-							puts 'application.css renamed to application.css.scss'
-						end
+						old = 'app/assets/stylesheets/application.css'
+						new = 'app/assets/stylesheets/application.css.scss'
+						File.rename(old, new)
 					# If we've entered bogus letters and numbers, or absolutely nothing...
 					else
 						# Make sure that we let ourselves know that we only accept yes and no answers...
@@ -48,6 +43,7 @@ class Add
 		gem_file = File.open('Gemfile', 'r')
 		# Match our 'line' variable with the contents of our Gemfile. '!!()' will make our match boolean instead of '1' and 'nil'
 		match = !!(gem_file.read =~ /gem 'foundation-rails'/)
+		gem_file.close
 		# Open up a case for our match variable.
 		case match
 			# When the match returns true, i.e. the gem Does exist in our Gemfile...
