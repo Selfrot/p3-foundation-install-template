@@ -1,8 +1,6 @@
 require 'fileutils'
-require 'tempfile'
 
 class Add
-
 	def self.scss?
 		scss = File.exist?('app/assets/stylesheets/application.css.scss')
 		case scss
@@ -27,8 +25,6 @@ class Add
 				return
 		end
 	end
-
-
 	def self.foundation?
 		gem_file = File.open('Gemfile', 'r')
 		match = !!(gem_file.read =~ /gem 'foundation-rails'/)
@@ -47,15 +43,12 @@ class Add
 						gem = "\ngem 'foundation-rails'\n"
 						File.open('Gemfile', 'a') {|append| append.write(gem)}
 						puts 'Successfully added Foundation to your Gemfile.'
-
 						if File.exist?('app/assets/stylesheets/application.css.scss')
 							unless File.read('app/assets/stylesheets/application.css.scss') =~ /@import 'foundation_and_overrides';/
-
 								match = "*= require_self"
 								text = File.read('app/assets/stylesheets/application.css.scss')
 								replace = text.gsub("#{match}", "*= require_self\n*/\n@import 'foundation_and_overrides';\n/*")
 								File.open('app/assets/stylesheets/application.css.scss', "w") { |file| file << replace }
-
 							end
 						end
 					else
@@ -66,6 +59,4 @@ class Add
 				return
 		end
 	end
-
-
 end
