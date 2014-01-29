@@ -9,55 +9,55 @@ The source is documented so you can easily change things to suit your needs.
 
 The script will first notice:
 ``` ruby
-# puts "Do you want to enable sass"...
+# template.rb
 Add.scss?
 ```
-Which prompts for a yes/no answer.
-
-
 
 ``` ruby
+# lib/add.rb
 scss = File.exist?('app/assets/stylesheets/application.css.scss')
 case scss
 	when true
-			puts '"application.css.scss" already exists'
+		puts '"application.css.scss" already exists'
 	when false
-		Dir.glob('app/assets/stylesheets/application.css').each do |f|
-			FileUtils.mv f, "#{File.dirname(f)}/#{File.basename(f,'.*')}.css.scss"
-			puts "application.css renamed to application.css.scss"
+		puts "\n\n=======================================\nDo you want to enable SASS?\n=================(Y/N)================="
+		STDOUT.flush
+		input = STDIN.gets.chomp
+		case input.upcase
+			when 'N'
+				puts 'SASS was not added.'
+			when 'Y'
+				old = 'app/assets/stylesheets/application.css'
+				new = 'app/assets/stylesheets/application.css.scss'
+				File.rename(old, new)
+			else
+				puts 'Please enter Y or N'
+				Add.scss?
 		end
 	else
-	  return
+		return
 end
 ```
 
 Once SASS is out of the way, we'll run:
 ``` ruby
-# puts "Do you want to enable foundation"...
 Add.foundation?
 ```
 
 To be sure that we don't add stuff that's already there.
 Let's say you enter Y by mistake, then we have this nifty test to see whether our gem already exists.
 ``` ruby
-line = "\ngem 'foundation-rails'\n"
-gem_file = File.open('Gemfile', 'r')
-match = !!(gem_file.read =~ /#{line}/)
-case match
-	when false
-		File.open('Gemfile', 'a') {|append| append.write(line)}
-		puts "Successfully added Foundation to your Gemfile."
-		if File.exist?('app/assets/stylesheets/application.css.scss')
-			scss_file = File.read('app/assets/stylesheets/application.css.scss')
-			(!!(scss_file =~ /@import 'foundation_and_overrides';/) == false) ?
-					Utilities::Writes.tmp_entry("ADD SCSS LINE") :
-					Utilities::Writes.tmp_entry("LINE EXISTS")
-		end
-	when true
-		puts "Foundation is already in your Gemfile."
-		Utilities::Writes.tmp_entry('FOUNDATION EXISTS')
-	else
-		return
+gem = "\ngem 'foundation-rails'\n"
+File.open('Gemfile', 'a') {|append| append.write(gem)}
+puts 'Successfully added Foundation to your Gemfile.'
+if File.exist?('app/assets/stylesheets/application.css.scss')
+	unless File.read('app/assets/stylesheets/application.css.scss') =~ /@import 'foundation_and_overrides';/
+		match = "*= require_self"
+		text = File.read('app/assets/stylesheets/application.css.scss')
+		replace = text.gsub("#{match}", "*= require_self\n*/\n@import 'foundation_and_overrides';\n/*")
+		File.open('app/assets/stylesheets/application.css.scss', "w") { |file| file << replace }
+	end
+end
 ```
 
 I figured a system which prompts for yes/no answers would be helpful for Rubymine users -- so we don't have to think about removing the Template whenever we want to create a project without Sass, Foundation or even both.
